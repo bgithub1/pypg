@@ -35,7 +35,6 @@ def pd_from_csv(csv_path):
     ret = pd.read_csv(csv_path)
     return ret
 
-    
 
     
     
