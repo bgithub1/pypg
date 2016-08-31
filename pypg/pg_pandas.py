@@ -31,10 +31,30 @@ def get_sql(sql_string,engine):
 def put_df(df,table_name,engine,ifexists='append'):
     df.to_sql(table_name,engine,if_exists=ifexists)
     
-def pd_from_csv(csv_path):
+def df_from_csv(csv_path):
     ret = pd.read_csv(csv_path)
     return ret
 
+def put_df_from_csv_using(username,password,dburl,databasename,
+                          table_name,
+                          csv_path,sql="select  ' no sql statement provided' sql_statement",
+                          ifexists_action='append'):
+    '''
+    '''
+    # get a pandas/sqlalchemy connection engine
+    e = get_engine(username, password, dburl, databasename);
+    # use pandas to read the file into a DataFrame
+    df =df_from_csv(csv_path)
+    # call the upload command which sends the dataframe to the db table
+    put_df(df,table_name,e,ifexists_action)
+    # execute an sql function that uses the uploaded table to update the 
+    ret = get_sql(sql, e)
+    return ret
+    
+def create_in_list(array_of_values,quote_char="'"): 
+    vals = map(lambda x: quote_char + str(x) + quote_char,[x for x in array_of_values])
+    vals_line = ",".join(vals)
+    return vals_line
 
-    
-    
+
+  

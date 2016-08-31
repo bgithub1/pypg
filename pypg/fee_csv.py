@@ -30,7 +30,7 @@ csv_path = arg_map['csvpath'] # path to the csv file on your computer
 # get a pandas/sqlalchemy connection engine
 e = pgp.get_engine(username, password, dburl, databasename);
 # use pandas to read the file into a Data Frame
-df_fee = pgp.pd_from_csv(csv_path)
+df_fee = pgp.df_from_csv(csv_path)
 # call the upload command which sends the dataframe to the db table
 pgp.put_df(df_fee,table_name,e,'replace')
 # execute an sql function that uses the uploaded table to update the 
