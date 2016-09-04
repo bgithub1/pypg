@@ -8,6 +8,8 @@ general access to postgres via pandas and sqlalchemy
 import pandas as pd
 from sqlalchemy import create_engine
 import sys
+import datetime 
+
 
 def get_argv_dict():
     ret = {}
@@ -24,6 +26,10 @@ def get_engine(username,password,dburl,databasename):
     engine = create_engine(engine_string)
     return engine
 
+def sql_date(mmddyy):
+    dt = datetime.datetime.strptime(mmddyy,'%m/%d/%y')
+    return str(dt).split(' ')[0]
+
 def get_sql(sql_string,engine):
     ret = pd.read_sql_query(sql_string,con=engine)
     return ret
@@ -33,6 +39,13 @@ def put_df(df,table_name,engine,ifexists='append'):
     
 def df_from_csv(csv_path):
     ret = pd.read_csv(csv_path)
+    return ret
+
+def csv_to_db(engine,source_csv,dest_table_name,
+              sql_to_execute_after_upload,ifexists_action='append'):
+    df = df_from_csv(source_csv)
+    put_df(df,dest_table_name,engine,ifexists_action)
+    ret = get_sql(sql_to_execute_after_upload,engine)
     return ret
 
 def put_df_from_csv_using(username,password,dburl,databasename,
@@ -56,5 +69,13 @@ def create_in_list(array_of_values,quote_char="'"):
     vals_line = ",".join(vals)
     return vals_line
 
+def get_engine_from_csv(csv_path):
+    df = df_from_csv(csv_path)
+    username = df.username[0].strip()
+    password = df.password[0].strip()
+    dburl = df.dburl[0].strip()
+    databasename = df.databasename[0].strip()
+    engine = get_engine(username, password, dburl, databasename)
+    return engine
 
   

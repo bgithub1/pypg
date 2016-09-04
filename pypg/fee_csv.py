@@ -38,3 +38,4 @@ pgp.put_df(df_fee,table_name,e,'replace')
 ret = pgp.get_sql("select * from billy.insert_clerk_fees_from_fee_table()", e)
 print ret
 
+
