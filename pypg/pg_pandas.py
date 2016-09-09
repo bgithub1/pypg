@@ -78,4 +78,6 @@ def get_engine_from_csv(csv_path):
     engine = get_engine(username, password, dburl, databasename)
     return engine
 
+def get_sum(df,column_list):
+    return df[column_list].astype(float).sum(axis=0)
   
