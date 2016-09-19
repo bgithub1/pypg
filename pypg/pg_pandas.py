@@ -9,8 +9,23 @@ import pandas as pd
 from sqlalchemy import create_engine
 import sys
 import datetime 
+import psycopg2 as ps
+import os
 
+def get_ps_cursor_from_csv(csv_path):
+    '''
+    '''
+    df = df_from_csv(csv_path)
+    username = df.username[0].strip()
+    password = df.password[0].strip()
+    dburl = df.dburl[0].strip()
+    databasename = df.databasename[0].strip()
+    conn = ps.connect(database=databasename, 
+                      user=username, password=password, 
+                      host=dburl, port=5432)
+    return conn 
 
+    
 def get_argv_dict():
     ret = {}
     for a in sys.argv:
@@ -41,8 +56,32 @@ def df_from_csv(csv_path):
     ret = pd.read_csv(csv_path)
     return ret
 
+
+def csv_to_db_copy(csv_path,tableName,db_csv_path='./db.csv'):
+    '''
+        Copy a csv file to a postgres table using the raw sql copy command
+        and psycopg2
+        RIGHT NOW THE TABLE NAME MUST BELONG TO THE SCHEMA THAT IS 
+          ASSOCIATED WITH YOUR LOGIN TO POSTGRES
+    '''
+    psyconn = get_ps_cursor_from_csv(db_csv_path)
+    df = df_from_csv(csv_path)
+    df.to_csv('__temp.csv',index=False,header=False)
+    f = open('__temp.csv','r')
+    cur = psyconn.cursor()
+    cur.copy_from(file=f,table=tableName,columns=tuple(df.columns.values),sep=',')
+    psyconn.commit()
+    cur.close()
+    f.close()
+    os.remove('__temp.csv')
+    return
+ 
+
 def csv_to_db(engine,source_csv,dest_table_name,
               sql_to_execute_after_upload,ifexists_action='append'):
+    '''
+       Use this method to 
+    '''
     df = df_from_csv(source_csv)
     put_df(df,dest_table_name,engine,ifexists_action)
     ret = get_sql(sql_to_execute_after_upload,engine)
