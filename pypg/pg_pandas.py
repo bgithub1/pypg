@@ -80,7 +80,7 @@ def csv_to_db_copy(csv_path,tableName,db_csv_path='./db.csv'):
 def csv_to_db(engine,source_csv,dest_table_name,
               sql_to_execute_after_upload,ifexists_action='append'):
     '''
-       Use this method to 
+       Use this method to upload a csv to postgres using pandas df to csv
     '''
     df = df_from_csv(source_csv)
     put_df(df,dest_table_name,engine,ifexists_action)
@@ -104,6 +104,10 @@ def put_df_from_csv_using(username,password,dburl,databasename,
     return ret
     
 def create_in_list(array_of_values,quote_char="'"): 
+    '''
+        Turn a list of values into a comma separated string that 
+          can be used in as the list in an in statement
+    '''
     vals = map(lambda x: quote_char + str(x) + quote_char,[x for x in array_of_values])
     vals_line = ",".join(vals)
     return vals_line
