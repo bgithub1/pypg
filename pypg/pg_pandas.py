@@ -57,7 +57,7 @@ def df_from_csv(csv_path):
     return ret
 
 
-def csv_to_db_copy(csv_path,tableName,db_csv_path='./db.csv'):
+def csv_to_db_copy(df,tableName,db_csv_path='./db.csv'):
     '''
         Copy a csv file to a postgres table using the raw sql copy command
         and psycopg2
@@ -65,7 +65,7 @@ def csv_to_db_copy(csv_path,tableName,db_csv_path='./db.csv'):
           ASSOCIATED WITH YOUR LOGIN TO POSTGRES
     '''
     psyconn = get_ps_cursor_from_csv(db_csv_path)
-    df = df_from_csv(csv_path)
+#     df = df_from_csv(csv_path)
     df.to_csv('__temp.csv',index=False,header=False)
     f = open('__temp.csv','r')
     cur = psyconn.cursor()
@@ -123,4 +123,4 @@ def get_engine_from_csv(csv_path):
 
 def get_sum(df,column_list):
     return df[column_list].astype(float).sum(axis=0)
-  
+
