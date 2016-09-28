@@ -45,8 +45,11 @@ def sql_date(mmddyy):
     dt = datetime.datetime.strptime(mmddyy,'%m/%d/%y')
     return str(dt).split(' ')[0]
 
-def get_sql(sql_string,engine):
-    ret = pd.read_sql_query(sql_string,con=engine)
+def get_sql(sql_string,engine=None):
+    e = engine
+    if e is None:
+        e = get_engine_from_csv("./db.csv")
+    ret = pd.read_sql_query(sql_string,con=e)
     return ret
 
 def put_df(df,table_name,engine,ifexists='append'):
