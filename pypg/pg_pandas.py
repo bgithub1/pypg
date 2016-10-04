@@ -52,12 +52,19 @@ def get_sql(sql_string,engine=None):
     ret = pd.read_sql_query(sql_string,con=e)
     return ret
 
+def get_sqlfile(sql_file_path,engine=None):
+    with open(sql_file_path, 'r') as myfile:
+        sql_string=myfile.read()
+        return get_sql(sql_string,engine)
+    
+
 def put_df(df,table_name,engine,ifexists='append'):
     df.to_sql(table_name,engine,if_exists=ifexists)
     
 def df_from_csv(csv_path):
     ret = pd.read_csv(csv_path)
     return ret
+
 
 
 def csv_to_db_copy(df,tableName,db_csv_path='./db.csv'):
