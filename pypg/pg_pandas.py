@@ -11,6 +11,7 @@ import sys
 import datetime 
 import psycopg2 as ps
 import os
+from sqlalchemy.engine.base import Engine
 
 def get_ps_cursor_from_csv(csv_path):
     '''
@@ -92,8 +93,11 @@ def csv_to_db(engine,source_csv,dest_table_name,
     '''
        Use this method to upload a csv to postgres using pandas df to csv
     '''
+    e = engine
+    if e is None:
+        e= get_engine_from_csv("./db.csv")
     df = df_from_csv(source_csv)
-    put_df(df,dest_table_name,engine,ifexists_action)
+    put_df(df,dest_table_name,e,ifexists_action)
     ret = get_sql(sql_to_execute_after_upload,engine)
     return ret
 
