@@ -59,8 +59,11 @@ def get_sqlfile(sql_file_path,engine=None):
         return get_sql(sql_string,engine)
     
 
-def put_df(df,table_name,engine,ifexists='append'):
-    df.to_sql(table_name,engine,if_exists=ifexists)
+def put_df(df,table_name,engine=None,ifexists='append',save_index_of_df=True):
+    e = engine
+    if e is None:
+        e = get_engine_from_csv("./db.csv")
+    df.to_sql(table_name,e,if_exists=ifexists,index=save_index_of_df)
     
 def df_from_csv(csv_path):
     ret = pd.read_csv(csv_path)
@@ -88,16 +91,18 @@ def csv_to_db_copy(df,tableName,db_csv_path='./db.csv'):
     return
  
 
-def csv_to_db(engine,source_csv,dest_table_name,
-              sql_to_execute_after_upload,ifexists_action='append'):
+def csv_to_db(source_csv,dest_table_name,
+              sql_to_execute_after_upload="select  ' no sql statement provided' sql_statement",
+              ifexists_action='append',engine=None):
     '''
        Use this method to upload a csv to postgres using pandas df to csv
     '''
     e = engine
     if e is None:
         e= get_engine_from_csv("./db.csv")
+
     df = df_from_csv(source_csv)
-    put_df(df,dest_table_name,e,ifexists_action)
+    put_df(df,dest_table_name,e,ifexists_action,save_index_of_df=False)
     ret = get_sql(sql_to_execute_after_upload,engine)
     return ret
 
