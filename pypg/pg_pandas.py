@@ -143,3 +143,13 @@ def get_engine_from_csv(csv_path):
 def get_sum(df,column_list):
     return df[column_list].astype(float).sum(axis=0)
 
+def exec_stored_procedure(function_name,function_arg_list):
+    '''
+        Called postgres stored procedure
+    '''
+    psyconn = get_ps_cursor_from_csv('./db.csv')
+    cur = psyconn.cursor()
+    cur.callproc(function_name,function_arg_list)
+    cur.close()
+    psyconn.commit()
+    psyconn.close()
