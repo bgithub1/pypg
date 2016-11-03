@@ -43,8 +43,12 @@ def get_engine(username,password,dburl,databasename):
     return engine
 
 def sql_date(mmddyy):
-    dt = datetime.datetime.strptime(mmddyy,'%m/%d/%y')
-    return str(dt).split(' ')[0]
+    try:
+        dt = datetime.datetime.strptime(mmddyy,'%m/%d/%y')
+        return str(dt).split(' ')[0]
+    except Exception,e:
+        dt = datetime.datetime.strptime(mmddyy,'%m/%d/%Y')
+        return str(dt).split(' ')[0]
 
 def get_sql(sql_string,engine=None):
     e = engine
@@ -83,7 +87,7 @@ def csv_to_db_copy(df,tableName,db_csv_path='./db.csv'):
     df.to_csv('__temp.csv',index=False,header=False)
     f = open('__temp.csv','r')
     cur = psyconn.cursor()
-    cur.copy_from(file=f,table=tableName,columns=tuple(df.columns.values),sep=',')
+    cur.copy_from(file=f,table=tableName,columns=tuple(df.columns.values),sep=',',null="")
     psyconn.commit()
     cur.close()
     f.close()
@@ -153,3 +157,16 @@ def exec_stored_procedure(function_name,function_arg_list):
     cur.close()
     psyconn.commit()
     psyconn.close()
+
+def df_to_excel(df_list,xlsx_path,sheet_name_list=None):
+    writer = pd.ExcelWriter(xlsx_path)
+    sn_list = sheet_name_list
+    if sn_list is None:
+        ''' create it '''
+        num_list = range(1,(len(df_list)+1))
+        sn_list = ['Sheet' + str(x) for x in num_list]
+    for i in range(0,len(df_list)):
+        df_list[i].to_excel(writer,sn_list[i])
+    writer.save()  
+    
+      
