@@ -12,7 +12,8 @@ import datetime
 import psycopg2 as ps
 import os
 from sqlalchemy.engine.base import Engine
-
+import pandasql as psql
+import numpy as np
 
 def get_ps_cursor_from_csv(csv_path):
     '''
@@ -172,4 +173,90 @@ def df_to_excel(df_list,xlsx_path,sheet_name_list=None):
     
     
     
+def fam(df_detail,df_agg_keys,dict_detail_to_agg=None,func_to_apply=sum,cols_to_apply_on=None):
+    """
+    Filter, aggregate and then merge df_detail with df_agg_keys
+    :param df_detail: DataFrame with detail rows
+    :param df_agg_keys: DataFrame with values to inner join using like clauses
+    :param dict_detail_to_agg: Dictionary that associates column names from df_agg_keys 
+            with column names from df_detail.  The keys of dict_detail_to_agg are columns in df_agg_keys
+            and the values of dict_detail_to_agg are the associated columns in df_detail
+    :param func_to_apply: function to use during aggregation phase
     
+    :return new dataframe that is filtered and that has aggregate values on the appropriate rows
+            When fam returns the result DataFrame, it will 3 sets of columns:
+            1.  The original columns of df_detail
+            2.  The columns of df_agg_keys, but prefixed with 'q_' 
+            3.  The columns in the list cols_to_apply_on, but suffixed with '_y'
+
+    """
+    # rename dict_detail_to_agg to d for readability
+    d = dict_detail_to_agg
+    if d is None:
+        # build d
+        d = {}
+        for c in df_agg_keys.columns.values:
+            d[c] = c
+            
+    
+    # modify those columns that are None, nan or blank to have '%%' so that they becom sql wildcards in a like clause
+    def _make_wildcard(x):
+        if x is None:
+            return '%%'
+        if str(x).lower() == 'nan':
+            return '%%'
+        if str(x)<= '':
+            return '%%'
+        return x
+    
+    
+    ''' 
+        Build sql statement to get all rows from df_detail that corrospond to rows form df_agg_keys 
+        The statement will look like:
+            select p.*, q.active_parcel as q_active_parcel, q.tax_year as q_tax_year 
+            from df_detail p 
+            join df_agg_keys q on p.active_parcel = q.active_parcel and p.tax_year = q.tax_year
+    '''
+    '''  first, build on clause with like comparisons '''
+    for c in df_agg_keys.columns.values:
+        df_agg_keys[c] = df_agg_keys[c].apply(_make_wildcard)
+    # build string of "on" clauses with like verbs for join of df_detail with df_agg_keys
+    on_str  = ''
+    for col_df_agg_keys in d.keys():
+        col_df_detail = d[col_df_agg_keys]
+        on_str += 'p.' + col_df_detail + ' like ' + 'q.' + col_df_agg_keys + ' and '
+    on_str = on_str[0:(len(on_str)-4)] # get rid of last  'and'
+
+    ''' next, build the columns that our select statement will return '''
+    # build q cols using string.join to create the columns for the select string
+#     q_agg_keys_cols = [ "q." + x + " as q_" + x for x in d.keys()]
+    q_agg_keys_cols = [ "q." + x + " as q_" + x for x in df_agg_keys.keys()]
+    q_cols =  ",".join(q_agg_keys_cols)
+    
+    # create the select string
+    select_str = "select p.*,REPLACE_COLUMNS from df_detail p join df_agg_keys q on " + on_str
+    # copy in the select_cols
+    select_str = select_str.replace('REPLACE_COLUMNS',q_cols)
+    # run the sql
+    df_detail_2 = psql.sqldf(select_str,locals())
+    
+    # now do aggregation
+    agg_cols = cols_to_apply_on
+    if agg_cols is None:
+        agg_cols = filter(lambda x: x not in d.keys(),df_detail_2.columns.values)
+    group_by_cols = [ "q_" + x for x in d.keys()]
+    col_subset = group_by_cols + agg_cols
+    df_detail_gb = df_detail_2.groupby(group_by_cols,as_index=False)
+    df_agg = df_detail_gb.agg(func_to_apply)
+    df_agg = df_agg[col_subset]
+    
+    df_merge = df_detail_2.merge(df_agg,how='inner',on=group_by_cols)
+    dict_remove_underscore_x = {}
+    for c in df_merge.columns.values:
+        if '_x' in c:
+            dict_remove_underscore_x[c] = c.replace('_x','')            
+    df_merge = df_merge.rename(columns=dict_remove_underscore_x)
+    # remove  group_by_cols from final df
+#     final_cols = list(set(df_merge.columns.values).difference(group_by_cols))          
+#     return df_merge[final_cols]
+    return df_merge
