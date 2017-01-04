@@ -196,13 +196,13 @@ def filter_df(df_detail,df_agg_keys,dict_detail_to_agg=None):
     
     
     ''' 
-        Build sql statement to get all rows from df_detail that correspond to rows form df_agg_keys 
+        Build sql statement to get all rows from df_detail that correspond to rows from df_agg_keys 
         The statement will look like:
             select p.*, q.active_parcel as q_active_parcel, q.tax_year as q_tax_year 
             from df_detail p 
             join df_agg_keys q on p.active_parcel = q.active_parcel and p.tax_year = q.tax_year
     '''
-    '''  first, build on clause with like comparisons '''
+    '''  first, build "on" clause with like comparisons '''
     for c in df_agg_keys.columns.values:
         df_agg_keys[c] = df_agg_keys[c].apply(_make_wildcard)
     # build string of "on" clauses with like verbs for join of df_detail with df_agg_keys
