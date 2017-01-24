@@ -336,3 +336,7 @@ def fam(df_detail,df_agg_keys,dict_detail_to_agg=None,func_to_apply=sum,cols_to_
 #     df_merge = df_merge.rename(columns=dict_remove_underscore_x)
 #     return df_merge
     return agg_and_merge_df(df_detail_2, d, func_to_apply, cols_to_apply_on)
+
+
+def df_from_dict(dict_in):
+    return pd.DataFrame({'keys':dict_in.keys(),'values':dict_in.values()})
