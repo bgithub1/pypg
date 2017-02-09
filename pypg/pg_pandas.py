@@ -95,7 +95,24 @@ def csv_to_db_copy(df,tableName,db_csv_path='./db.csv'):
     f.close()
     os.remove('__temp.csv')
     return
- 
+
+def csv_to_db_fast(tableName,csv_path,db_csv_path='./db.csv'):
+    '''
+        Copy a csv file to a postgres table using the raw sql copy command
+        and psycopg2
+        RIGHT NOW THE TABLE NAME MUST BELONG TO THE SCHEMA THAT IS 
+          ASSOCIATED WITH YOUR LOGIN TO POSTGRES
+    '''
+    psyconn = get_ps_cursor_from_csv(db_csv_path)
+    df = df_from_csv(csv_path)
+    f = open(csv_path,'r')
+    cur = psyconn.cursor()
+    cur.copy_from(file=f,table=tableName,columns=tuple(df.columns.values),sep=',',null="")
+    psyconn.commit()
+    cur.close()
+    f.close()
+    return
+  
 
 def csv_to_db(source_csv,dest_table_name,
               sql_to_execute_after_upload="select  ' no sql statement provided' sql_statement",
