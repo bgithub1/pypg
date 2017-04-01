@@ -70,6 +70,13 @@ def put_df(df,table_name,engine=None,ifexists='append',save_index_of_df=True):
     if e is None:
         e = get_engine_from_csv("./db.csv")
     df.to_sql(table_name,e,if_exists=ifexists,index=save_index_of_df)
+
+def put_df_with_type_dict(df,table_name,type_dict,engine=None,ifexists='append',save_index_of_df=True):
+    e = engine
+    if e is None:
+        e = get_engine_from_csv("./db.csv")
+    df.to_sql(table_name,e,if_exists=ifexists,index=save_index_of_df,dtype=type_dict)
+
     
 def df_from_csv(csv_path):
     ret = pd.read_csv(csv_path)
