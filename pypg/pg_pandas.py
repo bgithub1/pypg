@@ -15,6 +15,33 @@ from sqlalchemy.engine.base import Engine
 import pandasql as psql
 import numpy as np
 
+
+class ArgDict():
+    """
+    Create an Dictionary of from an array that should have come from sys.argv
+      which looks like: -i myInputFile -o myOutputFile -b myBegDate -e myEndDate
+    The command line must have pairs like the above
+    """
+    def __init__(self):
+        curr_args =  sys.argv[1:]
+        
+        curr_key = ""
+        arg_dict = {}
+        for i in range(0,len(curr_args)):
+            if "-" == curr_args[i][0]:
+                curr_key = curr_args[i]
+            else:
+                arg_dict[curr_key] = curr_args[i]
+        self.arg_dict = arg_dict
+    
+    def get(self,arg):
+        if arg not in self.arg_dict:
+            return None
+
+        return self.arg_dict[arg]
+
+
+
 def get_ps_cursor_from_csv(csv_path):
     '''
     '''
