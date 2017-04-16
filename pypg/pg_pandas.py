@@ -12,6 +12,12 @@ import datetime
 import psycopg2 as ps
 import os
 from sqlalchemy.engine.base import Engine
+import sqlalchemy as sa
+from sqlalchemy.sql.sqltypes import INTEGER as SQLINT
+from sqlalchemy.sql.sqltypes import TEXT as SQLTEXT
+from sqlalchemy.dialects.postgresql import BYTEA as SQLBYTEA
+from sqlalchemy.dialects.postgresql import DATE as SQLDATE
+import sqlalchemy.orm as orm
 import pandasql as psql
 import numpy as np
 
@@ -178,6 +184,19 @@ def put_df_from_csv_using(username,password,dburl,databasename,
     # execute an sql function that uses the uploaded table to update the 
     ret = get_sql(sql, e)
     return ret
+
+
+def write_df_to_postgres_using_metadata(df,table_name,engine):
+    meta = sa.MetaData(bind=engine)
+    table_name_only = table_name.split(".")[1]
+    schema_only = table_name.split(".")[0]
+    docs = sa.Table(table_name_only,meta,autoload=True,schema=schema_only)
+    sess = orm.sessionmaker(bind=engine)()
+    conn = engine.connect()
+    listToWrite = df.to_dict(orient='records')
+    conn.execute(docs.insert(),listToWrite)
+    sess.commit()
+    sess.close()
     
 def create_in_list(array_of_values,quote_char="'"): 
     '''
