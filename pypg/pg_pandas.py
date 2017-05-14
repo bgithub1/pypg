@@ -73,7 +73,6 @@ def get_argv_dict():
 def get_engine(username,password,dburl,databasename):
     engine_string = 'postgresql://' + username + ':'+ password + '@'
     engine_string += dburl + '/' + databasename
-#    engine = create_engine('postgresql://billy:figtree77*@pg94.cxpdwhygwwwh.us-east-1.rds.amazonaws.com:5432/workhorse')
     engine = create_engine(engine_string)
     return engine
 
