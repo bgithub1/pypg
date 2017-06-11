@@ -17,6 +17,7 @@ from sqlalchemy.sql.sqltypes import INTEGER as SQLINT
 from sqlalchemy.sql.sqltypes import TEXT as SQLTEXT
 from sqlalchemy.dialects.postgresql import BYTEA as SQLBYTEA
 from sqlalchemy.dialects.postgresql import DATE as SQLDATE
+from sqlalchemy.sql.expression import bindparam
 import sqlalchemy.orm as orm
 import pandasql as psql
 import numpy as np
@@ -197,6 +198,27 @@ def write_df_to_postgres_using_metadata(df,table_name,engine):
     sess.commit()
     sess.close()
     
+
+def update_df_to_postgres_using_metadata_and_id(df,table_name,engine):
+    meta = sa.MetaData(bind=engine)
+    table_name_only = table_name.split(".")[1]
+    schema_only = table_name.split(".")[0]
+    docs = sa.Table(table_name_only,meta,autoload=True,schema=schema_only)
+    sess = orm.sessionmaker(bind=engine)()
+    conn = engine.connect()
+    df_2 = df.copy()
+    df_2['_id'] = df_2['id']
+    value_columns = filter(lambda c: c != 'id',df.columns.values)
+    df_2 = df_2[['_id']+value_columns]
+    listToWrite = df_2.to_dict(orient='records')
+    value_dict = {}
+    for vc in value_columns:
+        value_dict[vc] = bindparam(vc)
+    conn.execute(docs.update().where(docs.c.id == bindparam('_id')).values(value_dict),listToWrite)
+    sess.commit()
+    sess.close()
+
+
 def create_in_list(array_of_values,quote_char="'"): 
     '''
         Turn a list of values into a comma separated string that 
@@ -218,11 +240,15 @@ def get_engine_from_csv(csv_path):
 def get_sum(df,column_list):
     return df[column_list].astype(float).sum(axis=0)
 
-def exec_stored_procedure(function_name,function_arg_list):
+def exec_stored_procedure(function_name,function_arg_list,db_csv_path=None):
     '''
         Called postgres stored procedure
     '''
-    psyconn = get_ps_cursor_from_csv('./db.csv')
+    dbcsv = db_csv_path
+    if dbcsv is None:
+        dbcsv = "./db.csv"
+#     psyconn = get_ps_cursor_from_csv('./db.csv')
+    psyconn = get_ps_cursor_from_csv(dbcsv)
     cur = psyconn.cursor()
     cur.callproc(function_name,function_arg_list)
     cur.close()
@@ -409,3 +435,30 @@ def fam(df_detail,df_agg_keys,dict_detail_to_agg=None,func_to_apply=sum,cols_to_
 
 def df_from_dict(dict_in):
     return pd.DataFrame({'keys':dict_in.keys(),'values':dict_in.values()})
+
+
+def df_csv_list(csv_list):
+    """
+    Make a DataFrame from a csv list :
+    example:
+    header = ['c1','c2']
+    rows = [[1,2,3,4],['a','b','c','d']]
+    csv_list = [header] + rows
+    df = df_csv_list(csv_list)
+    
+    :param csv_list:
+    :return DataFrame
+    """
+    dict_for_df = {}
+    header = csv_list[0]
+    for i in range(len(header)):
+        col_name = header[i]
+        col_values = []
+        for csv in csv_list[1:]:
+            col_values.append(str(csv[i]))
+        dict_for_df[col_name] = col_values
+    df = pd.DataFrame(dict_for_df)
+    return df
+
+
+    
