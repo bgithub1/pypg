@@ -35,28 +35,33 @@ class ParamDict():
         with open(param_dict_path, 'rb') as handle:
             param_dict = json.load(handle)
         # now change templates
-        for key in param_dict.keys():
-            # STEP 1: get a value
-            value = param_dict[key]
-            # does this value have a template in it that needs replacing
-            result = re.search('[$][{].+[}]',value)
-            if result is None:
-                continue
-            # STEP 2: get the template
-            template = result.group(0)
-            # extract the key from the template
-            key_in_template  = template.replace('${','').replace('}','')
-            if key_in_template not in param_dict:
-                logger.warn("params ERROR: invalid template: " + template + " is not a key in param_dict")
-                continue
-            # STEP 3: Get the value using the template as a key.  Then replace the template 
-            #         in the original value with the value at the template,
-            #         The variable key_in_template is the "key part" of the template that
-            #           we found in value (from para_dict[key]).
-            value_in_template = param_dict[key_in_template]
-            new_value = value.replace(template,value_in_template)
-            # replace param_dict[key] with the new value
-            param_dict[key] = new_value
+        for currkey in param_dict.keys():
+            def _replace_template(key):
+                # STEP 1: get a value
+                value = param_dict[key]
+                # does this value have a template in it that needs replacing
+                result = re.search('[$][{].+[}]',value)
+                if result is None:
+#                     continue
+                    return
+                # STEP 2: get the template
+                template = result.group(0)
+                # extract the key from the template
+                key_in_template  = template.replace('${','').replace('}','')
+                if key_in_template not in param_dict:
+                    logger.warn("params ERROR: invalid template: " + template + " is not a key in param_dict")
+#                     continue
+                    return
+                # STEP 3: Get the value using the template as a key.  Then replace the template 
+                #         in the original value with the value at the template,
+                #         The variable key_in_template is the "key part" of the template that
+                #           we found in value (from para_dict[key]).
+                value_in_template = param_dict[key_in_template]
+                new_value = value.replace(template,value_in_template)
+                # replace param_dict[key] with the new value
+                param_dict[key] = new_value
+                _replace_template(key)
+            _replace_template(currkey)
         self.param_dict = param_dict    
 
 class ArgDict():
