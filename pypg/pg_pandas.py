@@ -316,6 +316,23 @@ def exec_stored_procedure(function_name,function_arg_list,db_csv_path=None):
     psyconn.commit()
     psyconn.close()
 
+def exec_sql_raw(sql,db_csv_path=None):
+    '''
+        Called postgres sql statement when the sql references functions that are
+        not in the same schema as the login referenced by db_csv_path
+    '''
+    dbcsv = db_csv_path
+    if dbcsv is None:
+        dbcsv = "./db.csv"
+    psyconn = get_ps_cursor_from_csv(dbcsv)
+    cur = psyconn.cursor()
+    result = cur.execute(sql)
+    cur.close()
+    psyconn.commit()
+    psyconn.close()
+    return result
+
+
 def df_to_excel(df_list,xlsx_path,sheet_name_list=None):
     writer = pd.ExcelWriter(xlsx_path)
     sn_list = sheet_name_list
