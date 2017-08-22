@@ -5,6 +5,9 @@ Created on Mar 17, 2017
 '''
 import sys
 import os
+import pandas as pd
+import string
+
 # We'll render HTML templates and access data sent by POST
 # using the request object from flask. Redirect and url_for
 # will be used to redirect the user once the upload is done
@@ -51,6 +54,22 @@ def upload():
         return redirect(url_for('uploaded_file',
                                 filename=filename))
 
+# Route to show jquery DataTables
+@app.route('/dtables', methods=['GET'])
+def dtables():
+    # Get the name of the uploaded file
+    return render_template('dtables.html')
+
+# Route to show jquery DataTables
+@app.route('/dtables2', methods=['GET'])
+def dtables2():
+    # Get the name of the uploaded file
+    df_1 = pd.DataFrame({'c1':[1,2,3,4],'c2':['a','b','c','d']})
+    a = list(string.ascii_lowercase)
+    df_2 = pd.DataFrame({'c1':range(len(a)),'c2':a})
+    return render_template('dtables2.html', html_to_display_1=df_1.to_html(),html_to_display_2=df_2.to_html())
+
+
 def create_arg_dict(args=None):
     """
     Create an Dictionary of from an array that should have come from sys.argv
@@ -88,5 +107,6 @@ if __name__ == '__main__':
     app.run(
         host="127.0.0.1",
         port=int("5550"),
-        debug=True
+#         debug=True
+        debug=False
     )
