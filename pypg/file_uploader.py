@@ -65,9 +65,14 @@ def dtables():
 def dtables2():
     # Get the name of the uploaded file
     df_1 = pd.DataFrame({'c1':[1,2,3,4],'c2':['a','b','c','d']})
+    df_1.c1 = df_1.c1.astype(int)
     a = list(string.ascii_lowercase)
     df_2 = pd.DataFrame({'c1':range(len(a)),'c2':a})
-    return render_template('dtables2.html', html_to_display_1=df_1.to_html(),html_to_display_2=df_2.to_html())
+    df_2.c1 = df_2.c1.astype(int)
+    return render_template('dtables2.html', 
+            html_to_display_1=df_1.to_html(classes='table-striped'),
+            html_to_display_2=df_2.to_html(classes='table-striped')
+    )
 
 
 def create_arg_dict(args=None):

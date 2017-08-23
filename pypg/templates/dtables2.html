@@ -1,10 +1,36 @@
 <html>
 <head>
-  <link rel="stylesheet" type="text/css" href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css">
+  <!--<link rel="stylesheet" type="text/css" href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css">-->
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.2.2/css/select.dataTables.min.css">
+
+<style type="text/css">
+	/* BOOTSTRAP 3 TWEAKS */
+	.table-striped > tbody > tr:nth-of-type(2n+1),
+	.table-striped > tbody > tr.odd {
+	    background-color: #D9EDF7;
+	}
+	.table-striped > tbody > tr.even {
+	    background-color: #FFF;
+	}
+
+	#events {
+	        margin-bottom: 1em;
+	        padding: 1em;
+	        background-color: #f6f6f6;
+	        border: 1px solid #999;
+	        border-radius: 3px;
+	        height: 100px;
+	        overflow: auto;
+    }
+</style>
 </head>
 <body>
 
 <div style="width: 100%;">
+	<div id="events">
+		Event summary - new events added at the top
+	</div>
 
   <div style="width: 50%; float: left;">
   <h2>Table One</h2>
@@ -18,12 +44,36 @@
 
 </div>
 
-  <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.2.min.js"></script>
+
+  <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.12.4.min.js"></script>
+  <!-- 
   <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
+   -->
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>  
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/select/1.2.2/js/dataTables.select.min.js"></script>
   <script>
-  $(function(){
-    $(".dataframe").dataTable();
-  })
+  $(function() {
+	    var events = $('#events');
+	    var table = $('.dataframe').DataTable( {
+	        select: {
+	            style: 'os',
+	            blurable: true
+	        }
+	    } );
+	 
+	    table
+	        .on( 'select', function ( e, dt, type, indexes ) {
+	            var rowData = table.rows( indexes ).data().toArray();
+	            events.prepend( '<div><b>'+type+' selection</b> - '+JSON.stringify( rowData )+'</div>' );
+	        } )
+	        .on( 'deselect', function ( e, dt, type, indexes ) {
+	            var rowData = table.rows( indexes ).data().toArray();
+	            events.prepend( '<div><b>'+type+' <i>de</i>selection</b> - '+JSON.stringify( rowData )+'</div>' );
+	        } );
+
+	} );  
+  
+  
   </script>
 </body>
 </html>
