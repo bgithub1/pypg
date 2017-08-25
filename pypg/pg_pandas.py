@@ -41,7 +41,8 @@ class ParamDict():
                 # STEP 1: get a value
                 value = param_dict[key]
                 # does this value have a template in it that needs replacing
-                result = re.search('[$][{].+[}]',value)
+#                 result = re.search('[$][{].+[}]',value)
+                result = re.search('[$][{][^}]+[}]',value)
                 if result is None:
 #                     continue
                     return

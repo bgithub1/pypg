@@ -13,6 +13,7 @@ import string
 # will be used to redirect the user once the upload is done
 # and send_from_directory will help us to send/show on the
 # browser the file that the user just uploaded
+
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 #from Werkzeug import secure_filename
 uloader_folder = None
@@ -74,6 +75,11 @@ def dtables2():
             html_to_display_2=df_2.to_html(classes='table-striped')
     )
 
+@app.route('/dtables2_return', methods=['GET'])
+def dtables2_return():
+    rowdata = request.args.get('rowdata')
+    print rowdata
+    return render_template('ok.html')
 
 def create_arg_dict(args=None):
     """
