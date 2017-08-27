@@ -49,12 +49,12 @@
 			<td>
 				<div style="width: 100%;">
 				  <div style="width: 48%; float: left;">
-				  <h2>Table One</h2>
-				   {{ html_to_display_1 | safe }}
+				  <h2>Table Three</h2>
+				   {{ html_to_display_3 | safe }}
 				  </div>
 				  <div style="width: 48%; float: right;">
-				  <h2>Table Two</h2>
-				  {{ html_to_display_2 | safe }}
+				  <h2>Table Four</h2>
+				  {{ html_to_display_4 | safe }}
 				  </div>
 				</div>
 			</td>
@@ -90,32 +90,114 @@
    -->
   <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>  
   <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/select/1.2.2/js/dataTables.select.min.js"></script>
-  <script>
-  $(function() {
-	    var events = $('#events');
-	    var table = $('.dataframe').DataTable( {
-	        select: {
-	            style: 'os',
-	            blurable: true
-	        }
-	    } );
-	 
-	    table
-	        .on( 'select', function ( e, dt, type, indexes ) {
-	            var rowData = table.rows( indexes ).data().toArray();
-	            $.get("127.0.0.1:5550/dtables2_return", function(data, status){
-	                alert("Data: " + data + "\nStatus: " + status);
-	            });	            
-	            events.prepend( '<div><b>'+type+' selection</b> - '+JSON.stringify( rowData )+'</div>' );
-	        } )
-	        .on( 'deselect', function ( e, dt, type, indexes ) {
-	            var rowData = table.rows( indexes ).data().toArray();
-	            events.prepend( '<div><b>'+type+' <i>de</i>selection</b> - '+JSON.stringify( rowData )+'</div>' );
-	        } );
 
-	} );  
-  
-  
+  <script>
+	  $(function() {
+		    var events = $('#events');
+		    var table = $('.df1').DataTable( {
+		        select: {
+		            style: 'os',
+		            blurable: true
+		        }
+		    } );
+		 
+		    table
+		        .on( 'select', function ( e, dt, type, indexes ) {
+		            var rowData = table.row( indexes[0] ).data();
+		            $.get("http://127.0.0.1:5550/dtables2_return?rowdata="+JSON.stringify( rowData ), function(data, status){
+		            	events.prepend( '<div><b>data:</b> - '+ data  + ' <b>status:</b> ' + status + '</div>' );
+		            });	            
+		            events.prepend( '<div><b>'+type+' selection</b> - '+JSON.stringify( rowData )+'</div>' );
+		        } )
+		        .on( 'deselect', function ( e, dt, type, indexes ) {
+		            var rowData = table.rows( indexes ).data().toArray();
+		            events.prepend( '<div><b>'+type+' <i>de</i>selection</b> - '+JSON.stringify( rowData )+'</div>' );
+		        } );
+	
+		} );     
   </script>
+
+
+
+  <script>
+	  $(function() {
+		    var events = $('#events');
+		    var table = $('.df2').DataTable( {
+		        select: {
+		            style: 'os',
+		            blurable: true
+		        }
+		    } );
+		 
+		    table
+		        .on( 'select', function ( e, dt, type, indexes ) {
+		            var rowData = table.row( indexes[0] ).data();
+		            $.get("http://127.0.0.1:5550/dtables2_return?rowdata="+JSON.stringify( rowData ), function(data, status){
+		            	events.prepend( '<div><b>data:</b> - '+ data  + ' <b>status:</b> ' + status + '</div>' );
+		            });	            
+		            events.prepend( '<div><b>'+type+' selection</b> - '+JSON.stringify( rowData )+'</div>' );
+		        } )
+		        .on( 'deselect', function ( e, dt, type, indexes ) {
+		            var rowData = table.rows( indexes ).data().toArray();
+		            events.prepend( '<div><b>'+type+' <i>de</i>selection</b> - '+JSON.stringify( rowData )+'</div>' );
+		        } );
+	
+		} );     
+  </script>
+
+  <script>
+	  $(function() {
+		    var events = $('#events');
+		    var table = $('.df3').DataTable( {
+		        select: {
+		            style: 'os',
+		            blurable: true
+		        }
+		    } );
+		 
+		    table
+		        .on( 'select', function ( e, dt, type, indexes ) {
+		            var rowData = table.row( indexes[0] ).data();
+		            $.get("http://127.0.0.1:5550/dtables2_return?rowdata="+JSON.stringify( rowData ), function(data, status){
+		            	events.prepend( '<div><b>data:</b> - '+ data  + ' <b>status:</b> ' + status + '</div>' );
+		            });	            
+		            events.prepend( '<div><b>'+type+' selection</b> - '+JSON.stringify( rowData )+'</div>' );
+		        } )
+		        .on( 'deselect', function ( e, dt, type, indexes ) {
+		            var rowData = table.rows( indexes ).data().toArray();
+		            events.prepend( '<div><b>'+type+' <i>de</i>selection</b> - '+JSON.stringify( rowData )+'</div>' );
+		        } );
+	
+		} );     
+  </script>
+
+  <script>
+	  $(function() {
+		    var events = $('#events');
+		    var table = $('.df4').DataTable( {
+		        select: {
+		            style: 'os',
+		            blurable: true
+		        }
+		    } );
+		 
+		    table
+		        .on( 'select', function ( e, dt, type, indexes ) {
+		            var rowData = table.row( indexes[0] ).data();
+		            $.get("http://127.0.0.1:5550/dtables2_return?rowdata="+JSON.stringify( rowData ), function(data, status){
+		            	events.prepend( '<div><b>data:</b> - '+ data  + ' <b>status:</b> ' + status + '</div>' );
+		            });	            
+		            events.prepend( '<div><b>'+type+' selection</b> - '+JSON.stringify( rowData )+'</div>' );
+		        } )
+		        .on( 'deselect', function ( e, dt, type, indexes ) {
+		            var rowData = table.rows( indexes ).data().toArray();
+		            events.prepend( '<div><b>'+type+' <i>de</i>selection</b> - '+JSON.stringify( rowData )+'</div>' );
+		        } );
+	
+		} );     
+  </script>
+
+
+
 </body>
 </html>

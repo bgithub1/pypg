@@ -70,9 +70,19 @@ def dtables2():
     a = list(string.ascii_lowercase)
     df_2 = pd.DataFrame({'c1':range(len(a)),'c2':a})
     df_2.c1 = df_2.c1.astype(int)
+    a = list(string.ascii_uppercase)
+    df_3 = pd.DataFrame({'c1':range(len(a)),'c2':a})
+    df_3.c1 = df_3.c1.astype(int)
+    df_3.c1 = df_3.c1.apply(lambda x:x*100)
+
+    df_4 = pd.DataFrame({'c1':['dog','cat','mouse'],'c2':[1,2,3]})
+    df_4.c2 = df_4.c2.astype(int)
+    
     return render_template('dtables2.html', 
-            html_to_display_1=df_1.to_html(classes='table-striped'),
-            html_to_display_2=df_2.to_html(classes='table-striped')
+            html_to_display_1=df_1.to_html(classes='table-striped df1'),
+            html_to_display_2=df_2.to_html(classes='table-striped df2'),
+            html_to_display_3=df_3.to_html(classes='table-striped df3'),
+            html_to_display_4=df_4.to_html(classes='table-striped df4')
     )
 
 @app.route('/dtables2_return', methods=['GET'])
