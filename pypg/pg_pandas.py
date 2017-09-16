@@ -540,4 +540,11 @@ def df_csv_list(csv_list):
     return df
 
 
-    
+def write_binary_data_to_file(document_binary,output_file_path):
+    s = str(document_binary)    
+    base64AttachmentText= s.encode("base64").replace('\n', '')
+    with open(output_file_path, 'w') as myfile:
+        myfile.write(base64AttachmentText)
+
+def write_document_binary_to_text_file(document_binary,output_file_path):
+    open(output_file_path,'w').writelines(str(document_binary).split('\\n'))
