@@ -51,7 +51,11 @@ class ParamDict():
                 # extract the key from the template
                 key_in_template  = template.replace('${','').replace('}','')
                 if key_in_template not in param_dict:
-                    logger.warn("params ERROR: invalid template: " + template + " is not a key in param_dict")
+                    mess = "params ERROR: invalid template: " + template + " is not a key in param_dict"
+                    if logger is None:
+                        print mess
+                    else:
+                        logger.warn(mess)
 #                     continue
                     return
                 # STEP 3: Get the value using the template as a key.  Then replace the template 
