@@ -24,6 +24,7 @@ import numpy as np
 import json
 import re
 import StringIO as sio
+import inspect
 
 class ParamDict():
     """
@@ -552,3 +553,43 @@ def write_binary_data_to_file(document_binary,output_file_path):
 
 def write_document_binary_to_text_file(document_binary,output_file_path):
     open(output_file_path,'w').writelines(str(document_binary).split('\\n'))
+    
+    
+def get_full_path_of_import(import_module_reference):
+    """
+    Example: (see test qba)
+    import machine.mach
+    import pypg.pg_pandas as pg
+    folder_of_mach = pg.get_full_path_of_import(pg)
+    
+    :param import_module_reference: a reference (NOT THE STRING REFERENCE) to an imported module
+    """
+    path_split = inspect.getfile(import_module_reference).split("/")
+    ret_path = "/".join(path_split[:len(path_split)-1])
+    return ret_path
+
+def print_source(import_module_method_reference):
+    """
+    Examples (this example can be found in machine/machine/test_qba.py: 
+
+    import mach
+    import pypg.pg_pandas as pg
+    if __name__=='__main__':
+        qba = mach.qbafp()
+        pg.print_source(mach.qbafp)
+        pg.print_source(qba.gfn)
+    
+    
+    :param import_module_method_reference: a reference (NOT THE STRING REFERENCE) to a method in an imported module
+    """
+    lines = inspect.getsource(import_module_method_reference).split('\n')
+    for l in lines:
+        print l   
+        
+def filter_import(import_module_reference,names_to_search_for):
+    """
+    This is an easy way to avoid typing "filter(lambda s: names_to_search_for in s,dir(import_module_reference))" at the console
+    :param import_module_reference: a reference to an import like pg, or mach (NOT quoted, like "pg" or "mach")
+    :param names_to_search_for: the whole or partial name of a method or variable in the import
+    """
+    return filter(lambda s: names_to_search_for in s,dir(import_module_reference))
