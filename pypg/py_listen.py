@@ -13,7 +13,7 @@ def listen(conn):
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     curs = conn.cursor()
     curs.execute('listen some_channel')
-    print "Waiting for notifications on channel 'test'"
+    print "Waiting for notifications on channel 'bankprocessing'"
     while 1:
         if select.select([conn],[],[],5) == ([],[],[]):
             print "Timeout"

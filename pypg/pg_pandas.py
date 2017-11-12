@@ -25,6 +25,7 @@ import json
 import re
 import StringIO as sio
 import inspect
+from _ast import Module
 
 class ParamDict():
     """
@@ -557,7 +558,7 @@ def write_document_binary_to_text_file(document_binary,output_file_path):
     
 def get_full_path_of_import(import_module_reference):
     """
-    Example: (see test qba)
+    Example: (see bankprocessing qba)
     import machine.mach
     import pypg.pg_pandas as pg
     folder_of_mach = pg.get_full_path_of_import(pg)
@@ -585,6 +586,15 @@ def print_source(import_module_method_reference):
     lines = inspect.getsource(import_module_method_reference).split('\n')
     for l in lines:
         print l   
+
+def df_print(df):    
+    """
+    Print all rows of a dataframe
+    :param df:
+    """
+    with pd.option_context('display.max_rows', None, 'display.max_columns', 3):
+        print(df)
+
         
 def filter_import(import_module_reference,names_to_search_for):
     """
@@ -593,3 +603,13 @@ def filter_import(import_module_reference,names_to_search_for):
     :param names_to_search_for: the whole or partial name of a method or variable in the import
     """
     return filter(lambda s: names_to_search_for in s,dir(import_module_reference))
+
+def ls_methods(import_module_reference):
+    module_names = [func for func in dir(import_module_reference) if 'function' in str(type(getattr(import_module_reference,func)))]
+    module_args = [inspect.getargspec(getattr(import_module_reference, mn)) for mn in module_names]
+    df_ret = pd.DataFrame({'module':module_names,'module_args':module_args})
+    return df_ret
+
+def pd_widen():
+    pd.set_option('display.width', 200)
+        
