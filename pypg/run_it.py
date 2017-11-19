@@ -1,29 +1,29 @@
 import sys
-qbpython_workpace = sys.argv[1]
+qbpython_workspace = sys.argv[1]
 py_to_execute = sys.argv[2]
 import os
 
 curdir = os.getcwd()
 print "working directory = " + curdir
 subfolders = [
-              qbpython_workpace + '/attachmentprocessor',
-              qbpython_workpace + '/attachmentprocessor/attachmentprocessor',
-              qbpython_workpace + '/bai_parse',
-              qbpython_workpace + '/bai_parse/bai2',
-              qbpython_workpace + '/caponelockbox',
-              qbpython_workpace + '/caponelockbox/caponelockbox',
-              qbpython_workpace + '/dbqbsync',
-              qbpython_workpace + '/dbqbsync/dbqbsync',
-              qbpython_workpace + '/dbqbsync/figscripts',
-              qbpython_workpace + '/pnclockbox',
-              qbpython_workpace + '/pnclockbox/pnclockbox',
-              qbpython_workpace + '/pygmail',
-              qbpython_workpace + '/pygmail/examples',
-              qbpython_workpace + '/pygmail/gmail',
-              qbpython_workpace + '/pypostgres',
-              qbpython_workpace + '/pypostgres/pypg',
-              qbpython_workpace + '/qbpythonapi',
-              qbpython_workpace + '/qbpythonapi/qbapi',
+              qbpython_workspace + '/attachmentprocessor',
+              qbpython_workspace + '/attachmentprocessor/attachmentprocessor',
+              qbpython_workspace + '/bai_parse',
+              qbpython_workspace + '/bai_parse/bai2',
+              qbpython_workspace + '/caponelockbox',
+              qbpython_workspace + '/caponelockbox/caponelockbox',
+              qbpython_workspace + '/dbqbsync',
+              qbpython_workspace + '/dbqbsync/dbqbsync',
+              qbpython_workspace + '/dbqbsync/figscripts',
+              qbpython_workspace + '/pnclockbox',
+              qbpython_workspace + '/pnclockbox/pnclockbox',
+              qbpython_workspace + '/pygmail',
+              qbpython_workspace + '/pygmail/examples',
+              qbpython_workspace + '/pygmail/gmail',
+              qbpython_workspace + '/pypostgres',
+              qbpython_workspace + '/pypostgres/pypg',
+              qbpython_workspace + '/qbpythonapi',
+              qbpython_workspace + '/qbpythonapi/qbapi',
             ]
 for folder in subfolders:
     sys.path.append(folder)
