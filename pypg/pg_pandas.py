@@ -558,6 +558,7 @@ def write_document_binary_to_text_file(document_binary,output_file_path):
     
 def get_full_path_of_import(import_module_reference):
     """
+    GET THE FOLDER THAT HOLDS THE MODULE import_module_reference
     Example: (see bankprocessing qba)
     import machine.mach
     import pypg.pg_pandas as pg
