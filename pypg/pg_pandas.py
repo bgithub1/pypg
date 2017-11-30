@@ -596,6 +596,14 @@ def df_print(df):
     with pd.option_context('display.max_rows', None, 'display.max_columns', 3):
         print(df)
 
+def df_to_string(df):    
+    """
+    Print all rows of a dataframe
+    :param df:
+    """
+    with pd.option_context('display.max_rows', None, 'display.max_columns', 3):
+        return df.to_string()
+
         
 def filter_import(import_module_reference,names_to_search_for):
     """
