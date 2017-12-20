@@ -147,12 +147,15 @@ def get_sqlfile(sql_file_path,engine=None):
         return get_sql(sql_string,engine)
     
 
-def put_df(df,table_name,engine=None,ifexists='append',save_index_of_df=True):
+def put_df(df,table_name,engine=None,ifexists='append',save_index_of_df=True,schema=None):
     e = engine
     if e is None:
         e = get_engine_from_csv("./db.csv")
-    df.to_sql(table_name,e,if_exists=ifexists,index=save_index_of_df)
-
+    if schema is not None:
+        df.to_sql(table_name,e,if_exists=ifexists,index=save_index_of_df,schema=schema)
+    else:
+        df.to_sql(table_name,e,if_exists=ifexists,index=save_index_of_df)
+        
 def put_df_with_type_dict(df,table_name,type_dict,engine=None,ifexists='append',save_index_of_df=True):
     e = engine
     if e is None:
