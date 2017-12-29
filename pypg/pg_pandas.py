@@ -551,10 +551,41 @@ def df_csv_list(csv_list):
 
 def write_binary_data_to_file(document_binary,output_file_path):
     s = str(document_binary)    
-    base64AttachmentText= s.encode("base64").replace('\n', '')
+#     base64AttachmentText= s.encode("base64").replace('\n', '')
     with open(output_file_path, 'w') as myfile:
-        myfile.write(base64AttachmentText)
+#         myfile.write(base64AttachmentText)
+        myfile.write(s)
 
+
+def write_binary_data_to_file_with_sql(engine,sql,
+        blob_field_name,
+        file_name_field_name,
+        output_folder):
+    """
+    Write a group of binary files to an output folder, given an sql statements
+    :param engine:
+    :param sql:
+    :param blob_field_name:
+    :param file_name_field_name:
+    :param output_folder:
+    """
+    df_doc_bin = get_sql(sql,engine)
+    if df_doc_bin is None or len(df_doc_bin)<=0:
+        return None
+    if  blob_field_name not in df_doc_bin.columns.values:
+        return None
+    if  file_name_field_name not in df_doc_bin.columns.values:
+        return None
+    for i in range(len(df_doc_bin)):
+        name = str(df_doc_bin.iloc[i][file_name_field_name])
+        output_file_path = output_folder+"/" + name 
+        print "write_binary_data_to_file_with_sql: writing data to " + output_file_path   
+        s = str(df_doc_bin.iloc[i][blob_field_name])
+        with open(output_file_path, 'w') as myfile:
+                myfile.write(s)
+
+
+        
 def write_document_binary_to_text_file(document_binary,output_file_path):
     open(output_file_path,'w').writelines(str(document_binary).split('\\n'))
     
