@@ -25,7 +25,9 @@ import json
 import re
 import StringIO as sio
 import inspect
-from _ast import Module
+import zipfile 
+
+
 
 class ParamDict():
     """
@@ -560,7 +562,8 @@ def write_binary_data_to_file(document_binary,output_file_path):
 def write_binary_data_to_file_with_sql(engine,sql,
         blob_field_name,
         file_name_field_name,
-        output_folder):
+        output_folder,
+        file_name_adaptor=None):
     """
     Write a group of binary files to an output folder, given an sql statements
     :param engine:
@@ -568,6 +571,7 @@ def write_binary_data_to_file_with_sql(engine,sql,
     :param blob_field_name:
     :param file_name_field_name:
     :param output_folder:
+    :param file_name_adaptor: a python method that will take a file name, and convert it to something that makes it usable to write to a local folder
     """
     df_doc_bin = get_sql(sql,engine)
     if df_doc_bin is None or len(df_doc_bin)<=0:
@@ -578,16 +582,75 @@ def write_binary_data_to_file_with_sql(engine,sql,
         return None
     for i in range(len(df_doc_bin)):
         name = str(df_doc_bin.iloc[i][file_name_field_name])
+        if file_name_adaptor is not None:
+            name  = file_name_adaptor(name)
         output_file_path = output_folder+"/" + name 
         print "write_binary_data_to_file_with_sql: writing data to " + output_file_path   
         s = str(df_doc_bin.iloc[i][blob_field_name])
         with open(output_file_path, 'w') as myfile:
                 myfile.write(s)
 
+def write_binary_data_to_zip_file_with_sql(engine,sql,
+        blob_field_name,
+        file_name_field_name,
+        output_file,
+        file_name_adaptor=None):
+    """
+    Write a group of binary files to an output folder, given an sql statements
+    :param engine:
+    :param sql:
+    :param blob_field_name:
+    :param file_name_field_name:
+    :param output_file: this an actual file object (could be a memory_file, as in memory_file = io.BytesIO()
+    :param file_name_adaptor: a python method that will take a file name, and convert it to something that makes it usable to write to a local folder
+    """
+    df_doc_bin = get_sql(sql,engine)
+    if df_doc_bin is None or len(df_doc_bin)<=0:
+        return None
+    if  blob_field_name not in df_doc_bin.columns.values:
+        return None
+    if  file_name_field_name not in df_doc_bin.columns.values:
+        return None
+    dict_files = {}
+    for i in range(len(df_doc_bin)):
+        name = str(df_doc_bin.iloc[i][file_name_field_name])
+        if file_name_adaptor is not None:
+            name  = file_name_adaptor(name)
+        print "write_binary_data_to_file_with_sql: writing data to " + name   
+        s = str(df_doc_bin.iloc[i][blob_field_name])
+        dict_files[name] = s
+    # now make zip file
+    with zipfile.ZipFile(output_file, 'w') as zf:
+        for k in dict_files.keys():
+            individual_file_name = k 
+            individual_file_binary = dict_files[k]
+            data = zipfile.ZipInfo(individual_file_name)
+            data.compress_type = zipfile.ZIP_DEFLATED
+            zf.writestr(data, individual_file_binary)
+    return 
 
+def make_zip_file(file_folder_path,file_name_list,output_file):
+    """
+    Turn output_file into a zip file.  
+    
+    :param file_folder_path: the full path to the location of all of the files in file_name_list
+    :param file_name_list: list of file_names, without paths
+    :param output_file: file object (NOT A FILE NAME or PATH) which will hold the zipped contents
+    """
+    with zipfile.ZipFile(output_file, 'w') as zf:
+        for file_name in file_name_list:
+            fpath = file_folder_path + "/" + str(file_name)
+            if not os.path.isfile(fpath):
+                continue
+            file_data = open(fpath,'r').read() 
+            data = zipfile.ZipInfo(file_name)
+            data.compress_type = zipfile.ZIP_DEFLATED
+            zf.writestr(data, file_data)
         
 def write_document_binary_to_text_file(document_binary,output_file_path):
     open(output_file_path,'w').writelines(str(document_binary).split('\\n'))
+
+        
     
     
 def get_full_path_of_import(import_module_reference):
