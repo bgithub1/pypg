@@ -637,9 +637,14 @@ def make_zip_file(file_folder_path,file_name_list,output_file):
     :param file_name_list: list of file_names, without paths
     :param output_file: file object (NOT A FILE NAME or PATH) which will hold the zipped contents
     """
+    ffp = file_folder_path
+    if ffp is None:
+        ffp = ""
+    else:
+        ffp += "/"
     with zipfile.ZipFile(output_file, 'w') as zf:
         for file_name in file_name_list:
-            fpath = file_folder_path + "/" + str(file_name)
+            fpath = ffp + str(file_name)
             if not os.path.isfile(fpath):
                 continue
             file_data = open(fpath,'r').read() 
