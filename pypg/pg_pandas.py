@@ -706,6 +706,29 @@ def df_to_string(df):
     with pd.option_context('display.max_rows', None, 'display.max_columns', 3):
         return df.to_string()
 
+def df_find_header(df,head_value_to_find,col_num_to_search=None):
+    """
+    EXPERIMENTAL
+    """
+    if df.columns.values[col_num_to_search]==head_value_to_find:
+        return df
+    actual_header_row = -1
+    df2 = df.copy()
+    df2.index = range(len(df))
+    for i in range(10):
+        if head_value_to_find.lower() in str(df2.ix[i,col_num_to_search]).lower():
+            actual_header_row = i 
+            break
+    if actual_header_row<0:
+        return None
+    
+    s = sio.StringIO()
+    text_lines = df2.to_string().split('\n')
+    text_lines = text_lines[actual_header_row+1:len(text_lines)]
+    s = sio.StringIO()
+    s.writelines(text_lines)
+    df_ret = pd.read_csv(s,dtype=str)
+    return df_ret
         
 def filter_import(import_module_reference,names_to_search_for):
     """
