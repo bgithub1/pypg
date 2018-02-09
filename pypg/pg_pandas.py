@@ -615,7 +615,7 @@ def write_binary_data_to_zip_file_with_sql(engine,sql,
     for i in range(len(df_doc_bin)):
         name = str(df_doc_bin.iloc[i][file_name_field_name])
         if file_name_adaptor is not None:
-            name  = file_name_adaptor(name)
+            name  = file_name_adaptor(name,df_doc_bin.iloc[i])
         print "write_binary_data_to_file_with_sql: writing data to " + name   
         s = str(df_doc_bin.iloc[i][blob_field_name])
         dict_files[name] = s
