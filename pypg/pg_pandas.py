@@ -190,7 +190,7 @@ def csv_to_db_copy(df,tableName,db_csv_path='./db.csv'):
     os.remove('__temp.csv')
     return
 
-def df_to_db_fast(df,table_name,db_csv_path=None,sep_to_use=None):
+def df_to_db_fast(df,table_name,db_csv_path=None,sep_to_use=None,quoting_to_use=None):
     sep = sep_to_use
     if sep is None:
         sep = ','
@@ -199,7 +199,7 @@ def df_to_db_fast(df,table_name,db_csv_path=None,sep_to_use=None):
         p = "./db.csv"
     psyconn = get_ps_cursor_from_csv(p)
     f = sio.StringIO()
-    df.to_csv(f, index=False,header=False,sep=sep)
+    df.to_csv(f, index=False,header=False,sep=sep,quoting=quoting_to_use)
     f.seek(0)  # move position to beginning of file before reading
     cur = psyconn.cursor()
     cur.copy_from(file=f,table=table_name,columns=tuple(df.columns.values),sep=sep,null="")
