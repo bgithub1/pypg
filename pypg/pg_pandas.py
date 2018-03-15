@@ -580,6 +580,8 @@ def write_binary_data_to_file_with_sql(engine,sql,
         return None
     if  file_name_field_name not in df_doc_bin.columns.values:
         return None
+    full_path = []
+    
     for i in range(len(df_doc_bin)):
         name = str(df_doc_bin.iloc[i][file_name_field_name])
         if file_name_adaptor is not None:
@@ -589,7 +591,11 @@ def write_binary_data_to_file_with_sql(engine,sql,
         s = str(df_doc_bin.iloc[i][blob_field_name])
         with open(output_file_path, 'w') as myfile:
                 myfile.write(s)
-
+        full_path.append(output_file_path)
+    df_full_path = pd.DataFrame({'full_path':full_path})
+    df_return = pd.concat([df_doc_bin,df_full_path],axis=1)
+    return df_return
+    
 def write_binary_data_to_zip_file_with_sql(engine,sql,
         blob_field_name,
         file_name_field_name,
