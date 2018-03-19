@@ -571,7 +571,7 @@ def write_binary_data_to_file_with_sql(engine,sql,
     :param blob_field_name:
     :param file_name_field_name:
     :param output_folder:
-    :param file_name_adaptor: a python method that will take a file name, and convert it to something that makes it usable to write to a local folder
+    :param file_name_adaptor: a python method that will take a row of the input dataframe,  and convert it to something that makes it usable to write to a local folder
     """
     df_doc_bin = get_sql(sql,engine)
     if df_doc_bin is None or len(df_doc_bin)<=0:
@@ -585,7 +585,8 @@ def write_binary_data_to_file_with_sql(engine,sql,
     for i in range(len(df_doc_bin)):
         name = str(df_doc_bin.iloc[i][file_name_field_name])
         if file_name_adaptor is not None:
-            name  = file_name_adaptor(name)
+#             name  = file_name_adaptor(name)
+            name  = file_name_adaptor(df_doc_bin.iloc[i])
         output_file_path = output_folder+"/" + name 
         print "write_binary_data_to_file_with_sql: writing data to " + output_file_path   
         s = str(df_doc_bin.iloc[i][blob_field_name])
