@@ -1,7 +1,7 @@
 # you must run this
 # arg1 is the full path of your VirtualEnvs/qbpython folder
 # arg2 is the working directory of your code
-# args 3 through n are that modules arguments
+# args 3 through n are that module's arguments
 # example: (run from your-qbpython-workspace/caponelockbox/caponelockbox)
 # sh ../../pypostgres/pypg/run_it.sh /users/bperlman1/Virtualenvs/qbpython  ./ run_all_bank_stuff_daily.py -write_to_db true -bai2_text_file "${bai_txt_file_full_path}" -bank_statement_table developer.bank_statements_temp -sql_migrate_procedure developer.migrate_single_payment_deposits -db_csv_path "../../dbqbsync/dbqbsync/db_jona.csv"
 
