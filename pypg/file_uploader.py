@@ -14,7 +14,7 @@ import string
 # and send_from_directory will help us to send/show on the
 # browser the file that the user just uploaded
 
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory,make_response
 #from Werkzeug import secure_filename
 uloader_folder = None
 # Initialize the Flask application
@@ -84,6 +84,43 @@ def dtables2():
             html_to_display_3=df_3.to_html(classes='table-striped df3'),
             html_to_display_4=df_4.to_html(classes='table-striped df4')
     )
+
+
+# Route to show jquery DataTables
+@app.route('/view_csv', methods=['GET'])
+def view_csv():
+    # Get the name of the uploaded file
+    csv_path = request.args.get('csv_path')
+    html=None
+    if ".txt" in csv_path:
+        s = open(csv_path,'r').read()
+        html = unicode(s, "utf-8")
+        return render_template('editor_viewer.html', 
+            html_to_display_1=html)
+    else:
+        width = pd.get_option('display.max_colwidth')
+        pd.set_option('display.max_colwidth', -1)
+        df = pd.read_csv(csv_path)
+        html = df.to_html(classes='table-striped df1')
+        pd.set_option('display.max_colwidth', width)
+        return render_template('csv_viewer.html', 
+            html_to_display_1=html)
+
+
+@app.route('/editor_view', methods=['GET'])
+def editor_view():
+    # Get the name of the uploaded file
+    text_path = request.args.get('text_path')
+    s = open(text_path,'r').read()
+    html = unicode(s, "utf-8")
+    return render_template('editor_viewer.html', 
+        html_to_display_1=html)
+    
+@app.route('/editor_capture_text', methods=['POST'])
+def editor_capture_text():
+    # Get the name of the uploaded file
+    full_text = request.args.get('full_text')
+    print full_text
 
 @app.route('/dtables2_return', methods=['GET'])
 def dtables2_return():
