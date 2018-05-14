@@ -1,0 +1,23 @@
+Metadata-Version: 2.1
+Name: pypg
+Version: 0.0.1
+Summary: Python wrapper for Sql access via Pandas and SqlAlchemy
+Home-page: https://github.com/bgithub1/pypg.git
+Author: Bill Perlman
+Author-email: bperlman@liverisk.com
+License: UNKNOWN
+Description: pypg contains wrapper functions that use pandas and sqlalchemy to read and write Dataframes to postgresql.
+        
+        
+Keywords: sample setuptools development
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Software Development :: Build Tools
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Description-Content-Type: text/markdown

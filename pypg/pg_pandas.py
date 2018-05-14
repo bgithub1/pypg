@@ -11,16 +11,10 @@ import sys
 import datetime 
 import psycopg2 as ps
 import os
-from sqlalchemy.engine.base import Engine
 import sqlalchemy as sa
-from sqlalchemy.sql.sqltypes import INTEGER as SQLINT
-from sqlalchemy.sql.sqltypes import TEXT as SQLTEXT
-from sqlalchemy.dialects.postgresql import BYTEA as SQLBYTEA
-from sqlalchemy.dialects.postgresql import DATE as SQLDATE
 from sqlalchemy.sql.expression import bindparam
 import sqlalchemy.orm as orm
 import pandasql as psql
-import numpy as np
 import json
 import re
 from io import StringIO as sio
