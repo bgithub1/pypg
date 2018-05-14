@@ -7,7 +7,7 @@ import sys
 import os
 import pandas as pd
 import string
-
+from builtins import str
 # We'll render HTML templates and access data sent by POST
 # using the request object from flask. Redirect and url_for
 # will be used to redirect the user once the upload is done
@@ -94,7 +94,8 @@ def view_csv():
     html=None
     if ".txt" in csv_path:
         s = open(csv_path,'r').read()
-        html = unicode(s, "utf-8")
+#         html = unicode(s, "utf-8")
+        html = str(s, "utf-8")
         return render_template('editor_viewer.html', 
             html_to_display_1=html)
     else:
@@ -112,7 +113,8 @@ def editor_view():
     # Get the name of the uploaded file
     text_path = request.args.get('text_path')
     s = open(text_path,'r').read()
-    html = unicode(s, "utf-8")
+#     html = unicode(s, "utf-8")
+    html = str(s, "utf-8")
     return render_template('editor_viewer.html', 
         html_to_display_1=html)
     
@@ -120,12 +122,12 @@ def editor_view():
 def editor_capture_text():
     # Get the name of the uploaded file
     full_text = request.args.get('full_text')
-    print full_text
+    print (full_text)
 
 @app.route('/dtables2_return', methods=['GET'])
 def dtables2_return():
     rowdata = request.args.get('rowdata')
-    print rowdata
+    print (rowdata)
     return render_template('ok.html')
 
 def create_arg_dict(args=None):

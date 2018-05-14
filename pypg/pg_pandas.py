@@ -23,7 +23,7 @@ import pandasql as psql
 import numpy as np
 import json
 import re
-import StringIO as sio
+from io import StringIO as sio
 import inspect
 import zipfile 
 
@@ -57,7 +57,7 @@ class ParamDict():
                 if key_in_template not in param_dict:
                     mess = "params ERROR: invalid template: " + template + " is not a key in param_dict"
                     if logger is None:
-                        print mess
+                        print (mess)
                     else:
                         logger.warn(mess)
 #                     continue
@@ -132,7 +132,7 @@ def sql_date(mmddyy):
     try:
         dt = datetime.datetime.strptime(mmddyy,'%m/%d/%y')
         return str(dt).split(' ')[0]
-    except Exception,e:
+    except Exception as e:
         dt = datetime.datetime.strptime(mmddyy,'%m/%d/%Y')
         return str(dt).split(' ')[0]
 
@@ -588,7 +588,7 @@ def write_binary_data_to_file_with_sql(engine,sql,
 #             name  = file_name_adaptor(name)
             name  = file_name_adaptor(df_doc_bin.iloc[i])
         output_file_path = output_folder+"/" + name 
-        print "write_binary_data_to_file_with_sql: writing data to " + output_file_path   
+        print ("write_binary_data_to_file_with_sql: writing data to " + output_file_path)   
         s = str(df_doc_bin.iloc[i][blob_field_name])
         with open(output_file_path, 'w') as myfile:
                 myfile.write(s)
@@ -623,7 +623,7 @@ def write_binary_data_to_zip_file_with_sql(engine,sql,
         name = str(df_doc_bin.iloc[i][file_name_field_name])
         if file_name_adaptor is not None:
             name  = file_name_adaptor(name,df_doc_bin.iloc[i])
-        print "write_binary_data_to_file_with_sql: writing data to " + name   
+        print ("write_binary_data_to_file_with_sql: writing data to " + name)   
         s = str(df_doc_bin.iloc[i][blob_field_name])
         dict_files[name] = s
     # now make zip file
@@ -695,7 +695,7 @@ def print_source(import_module_method_reference):
     """
     lines = inspect.getsource(import_module_method_reference).split('\n')
     for l in lines:
-        print l   
+        print (l)   
 
 def df_print(df):    
     """

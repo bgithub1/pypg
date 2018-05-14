@@ -15,7 +15,7 @@ certnumber,purchaseamount,purid,syscountyname,purchasedate
 
 '''
 
-import pg_pandas as pgp
+from pypg import pg_pandas as pgp
 from pypg.pg_pandas import get_argv_dict
 
 arg_map = get_argv_dict()
@@ -36,6 +36,6 @@ pgp.put_df(df_fee,table_name,e,'replace')
 # execute an sql function that uses the uploaded table to update the 
 # tax_certificates.fl_taxcertpurchases table
 ret = pgp.get_sql("select * from billy.insert_clerk_fees_from_fee_table()", e)
-print ret
+print (ret)
 
 
